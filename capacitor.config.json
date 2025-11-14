@@ -1,0 +1,14 @@
+{
+  "appId": "com.papi.app",
+  "appName": "P.A.P.I",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}

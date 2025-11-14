@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>P.A.P.I - System for Invoices & Payments</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        nav {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+            flex-direction: row-reverse;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 1em;
+            color: #666;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .nav-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: white;
+        }
+
+        main {
+            padding: 40px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="date"] {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus,
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.2);
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        #qrCode {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        #qrCode h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        #qrCanvas {
+            max-width: 300px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .container {
+                border-radius: 0;
+            }
+
+            main {
+                padding: 20px;
+            }
+
+            .nav-btn {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>P.A.P.I</h1>
+            <p>מערכת ניהול חשבוניות ותשלומים</p>
+        </header>
+
+        <nav>
+            <button id="invoiceBtn" class="nav-btn active">חשבוניות</button>
+            <button id="paymentBtn" class="nav-btn">תשלומים</button>
+            <button id="reportsBtn" class="nav-btn">דוחות</button>
+        </nav>
+
+        <main>
+            <section id="invoiceSection" class="section active">
+                <h2>ניהול חשבוניות</h2>
+                <form id="invoiceForm">
+                    <div class="form-group">
+                        <label for="invoiceNumber">מספר חשבונית:</label>
+                        <input type="text" id="invoiceNumber" name="invoiceNumber" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="clientName">שם הלקוח:</label>
+                        <input type="text" id="clientName" name="clientName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="clientEmail">דוא"ל לקוח:</label>
+                        <input type="email" id="clientEmail" name="clientEmail" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount">סכום:</label>
+                        <input type="number" id="amount" name="amount" step="0.01" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="invoiceDate">תאריך חשבונית:</label>
+                        <input type="date" id="invoiceDate" name="invoiceDate" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">צור חשבונית</button>
+                    <button type="button" id="downloadBtn" class="btn btn-secondary" style="display: none;">הורד PDF</button>
+                </form>
+
+                <div id="qrCode" style="display: none; margin-top: 20px;">
+                    <h3>QR Code:</h3>
+                    <canvas id="qrCanvas"></canvas>
+                </div>
+            </section>
+
+            <section id="paymentSection" class="section">
+                <h2>ניהול תשלומים</h2>
+                <p>פיתוח בעיצומו...</p>
+            </section>
+
+            <section id="reportsSection" class="section">
+                <h2>דוחות</h2>
+                <p>פיתוח בעיצומו...</p>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script>
+        // Navigation
+        document.getElementById('invoiceBtn').addEventListener('click', () => showSection('invoice'));
+        document.getElementById('paymentBtn').addEventListener('click', () => showSection('payment'));
+        document.getElementById('reportsBtn').addEventListener('click', () => showSection('reports'));
+
+        function showSection(section) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            if (section === 'invoice') {
+                document.getElementById('invoiceSection').classList.add('active');
+                document.getElementById('invoiceBtn').classList.add('active');
+            } else if (section === 'payment') {
+                document.getElementById('paymentSection').classList.add('active');
+                document.getElementById('paymentBtn').classList.add('active');
+            } else if (section === 'reports') {
+                document.getElementById('reportsSection').classList.add('active');
+                document.getElementById('reportsBtn').classList.add('active');
+            }
+        }
+
+        // Invoice Form Handler
+        let currentInvoiceData = null;
+
+        document.getElementById('invoiceForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const invoiceNumber = document.getElementById('invoiceNumber').value;
+            const clientName = document.getElementById('clientName').value;
+            const clientEmail = document.getElementById('clientEmail').value;
+            const amount = document.getElementById('amount').value;
+            const invoiceDate = document.getElementById('invoiceDate').value;
+
+            // Store invoice data
+            currentInvoiceData = {
+                invoiceNumber,
+                clientName,
+                clientEmail,
+                amount,
+                invoiceDate,
+                createdAt: new Date().toLocaleString('he-IL')
+            };
+
+            // Generate QR Code
+            const qrData = `Invoice: ${invoiceNumber}, Client: ${clientName}, Amount: ${amount}`;
+            
+            try {
+                const canvas = document.getElementById('qrCanvas');
+                QRCode.toCanvas(canvas, qrData, { width: 300 });
+                document.getElementById('qrCode').style.display = 'block';
+                document.getElementById('downloadBtn').style.display = 'inline-block';
+                
+                alert(`✅ חשבונית ${invoiceNumber} נוצרה בהצלחה!\nQR Code הוצר בהצלחה.`);
+            } catch (error) {
+                console.error('QR Code error:', error);
+                alert('שגיאה ביצירת QR Code');
+            }
+        });
+
+        // Download PDF
+        document.getElementById('downloadBtn').addEventListener('click', async () => {
+            if (!currentInvoiceData) return;
+
+            try {
+                const jsPDFConstructor = window.jspdf.jsPDF;
+                const doc = new jsPDFConstructor();
+                
+                // Add title
+                doc.setFontSize(20);
+                doc.text('חשבונית', 190, 20, { align: 'right' });
+                
+                // Add invoice details
+                doc.setFontSize(12);
+                const rightX = 190;
+                let y = 40;
+                const lineHeight = 10;
+                
+                doc.text(`מספר חשבונית: ${currentInvoiceData.invoiceNumber}`, rightX, y, { align: 'right' });
+                y += lineHeight;
+                
+                doc.text(`שם לקוח: ${currentInvoiceData.clientName}`, rightX, y, { align: 'right' });
+                y += lineHeight;
+                
+                doc.text(`דוא"ל: ${currentInvoiceData.clientEmail}`, rightX, y, { align: 'right' });
+                y += lineHeight;
+                
+                doc.text(`תאריך: ${currentInvoiceData.invoiceDate}`, rightX, y, { align: 'right' });
+                y += lineHeight;
+                
+                doc.setFontSize(14);
+                doc.text(`סכום: ₪${parseFloat(currentInvoiceData.amount).toFixed(2)}`, rightX, y + 5, { align: 'right' });
+                
+                // Add QR Code to PDF
+                const qrCanvas = document.getElementById('qrCanvas');
+                if (qrCanvas && qrCanvas.toDataURL) {
+                    const qrImage = qrCanvas.toDataURL('image/png');
+                    doc.addImage(qrImage, 'PNG', 20, 100, 50, 50);
+                }
+                
+                // Save PDF
+                doc.save(`invoice_${currentInvoiceData.invoiceNumber}.pdf`);
+                alert('✅ PDF הורד בהצלחה!');
+            } catch (error) {
+                console.error('PDF error:', error);
+                alert('שגיאה בייצוא PDF');
+            }
+        });
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('P.A.P.I App Loaded');
+            document.getElementById('invoiceDate').valueAsDate = new Date();
+        });
+    </script>
+</body>
+</html>
