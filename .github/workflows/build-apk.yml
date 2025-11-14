@@ -51,10 +51,20 @@ jobs:
     - name: Sync Capacitor
       run: npx cap sync android
     
+    - name: Check Android directory structure
+      run: |
+        echo "=== Android directory structure ==="
+        ls -la android/
+        echo "=== App build.gradle exists? ==="
+        [ -f android/app/build.gradle ] && echo "YES" || echo "NO"
+        echo "=== Main manifest exists? ==="
+        [ -f android/app/src/main/AndroidManifest.xml ] && echo "YES" || echo "NO"
+    
     - name: Build APK
       run: |
         cd android
-        ./gradlew assembleDebug
+        ./gradlew --version
+        ./gradlew assembleDebug --stacktrace
     
     - name: Upload APK
       uses: actions/upload-artifact@v4
