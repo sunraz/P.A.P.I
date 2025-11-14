@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "718379997740",
+    "project_id": "papi-afd98",
+    "storage_bucket": "papi-afd98.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:718379997740:android:1269ae6585c763d3750f89",
+        "android_client_info": {
+          "package_name": "app.lovable.a1da661e04ba455c88c954c98ac5123d"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1TPqKTL95YqcqwQDdxoXGL8tN9X3v_C8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
