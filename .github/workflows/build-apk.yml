@@ -19,10 +19,10 @@ jobs:
       with:
         node-version: '20'
     
-    - name: Set up JDK (Java 17 for Android SDK compatibility)
+    - name: Set up JDK (Java 21 for Android/Gradle compile)
       uses: actions/setup-java@v3
       with:
-        java-version: '17'
+        java-version: '21'
         distribution: 'temurin'
     
     - name: Set up Android SDK
