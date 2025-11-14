@@ -31,8 +31,20 @@ jobs:
     - name: Install dependencies
       run: npm install
     
+    - name: Check if Android platform exists
+      id: check_android
+      run: |
+        if [ -d android ]; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+        fi
+
     - name: Add Android platform
-      run: npx cap add android
+      if: steps.check_android.outputs.exists == 'false'
+      run: |
+        echo "Android platform not found — adding"
+        npx cap add android
     
     - name: Sync Capacitor
       run: npx cap sync android
